@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<table border="1">
+    <thead>
+    <tr>
+        <td>id</td>
+        <td>username</td>
+        <td>nickname</td>
+        <td>password</td>
+        <td>delete</td>
+    </tr>
+    </thead>
+    <tbody id = "list">
+    </tbody>
+</table>
+<br/>
+<br/>
+<br/>
+<br/>
+
+<form id = "addUser">
+    id:<input type="text" name="id"><br/>
+    username:<input type="text" name="username"><br/>
+    nickName:<input type="text" name="nickName"><br/>
+    password:<input type="text" name="password"><br/>
+</form>
+<button id = "btn_submit" onclick="addUser()">submit</button>
+
+<script src="jquery-3.1.1.min.js"></script>
+<script>
+    $(function(){
+        $.get('list',{},function (data) {
+            if(data != null){
+                $.each(data,function(index,value){
+                    $("#list").append("<tr>" +
+                        "<td>"+value.id+"</td>" +
+                        "<td>"+value.username+"</td>" +
+                        "<td>"+value.nickName+"</td>" +
+                        "<td>"+value.password+"</td>" +
+                        "<td><a onclick='deleteUser("+value.id+")' href='javascript:void(0)'>edit</a></td>" +
+                        "</tr>")
+                })
+            }
+        },'json')
+    })
+
+    function deleteUser(userId) {
+        var data = {
+            "id":userId
+        }
+        $.post("del",data,function(data){
+            if(data != null){
+                $("#list").html("");
+                $.each(data,function(index,value){
+                    $("#list").append("<tr>" +
+                        "<td>"+value.id+"</td>" +
+                        "<td>"+value.username+"</td>" +
+                        "<td>"+value.nickName+"</td>" +
+                        "<td>"+value.password+"</td>" +
+                        "<td><a onclick='deleteUser("+value.id+")' href='javascript:void(0)'>edit</a></td>" +
+                        "</tr>")
+                })
+            }
+        },"json")
+    }
+
+    function addUser(){
+        var data = $("#addUser").serialize();
+        $.post('add',data,function(data){
+            $("#list").html("");
+            $.each(data,function(index,value){
+                $("#list").append("<tr>" +
+                    "<td>"+value.id+"</td>" +
+                    "<td>"+value.username+"</td>" +
+                    "<td>"+value.nickName+"</td>" +
+                    "<td>"+value.password+"</td>" +
+                    "<td><a onclick='deleteUser("+value.id+")' href='javascript:void(0)'>edit</a></td>" +
+                    "</tr>")
+            })
+        },'json');
+    }
+
+</script>
+</body>
+</html>
